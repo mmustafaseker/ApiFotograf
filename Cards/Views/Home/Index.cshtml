@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="input-group mb-3 offset-3 col-6">
+            <input type="text" class="form-control" id="qs" placeholder="Location" aria-label="Location" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-dark text-white" id="search-btn" type="button">Search</button>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4" id="dl">
+        <h1 class="text-center" style="margin-left:170px">Fotoğrafları görmek için lütfen konum girin</h1>
+
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(function () {
+            $("#search-btn").on("click", function (e) {
+                e.preventDefault();
+                var param = document.getElementById("qs").value
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("Search","Home")?queryString=" + param,
+                    success: function (data) {
+                        var obj = JSON.parse(data)
+
+                        var element = "";
+                        for (let item of obj.hits) {
+                            element += `<div class="col-3">
+                    <div class="card bg-dark text-white">
+                         <img class="card-img" height="150" width="200" src="${item.previewURL}" alt="${item.tags}">
+                    </div>
+                    <h5 class="text-center">${param}</h5>
+                </div>`;
+                        }
+                        $("#dl").html(element)
+                    },
+                    error: function (err) {
+                        console.log(err)
+                    }
+                })
+            })
+        });
+    </script>
+}
